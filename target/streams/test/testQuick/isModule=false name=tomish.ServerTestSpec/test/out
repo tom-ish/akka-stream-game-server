@@ -1,0 +1,5 @@
+[0m[[0m[0minfo[0m] [0m[0m[32mServerTestSpec:[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mobject[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should create empty GameService[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32mobject[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should connect to the GameService websocket[0m[0m
