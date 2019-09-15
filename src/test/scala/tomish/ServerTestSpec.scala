@@ -13,24 +13,16 @@ class ServerTestSpec extends FunSuite with Matchers with ScalatestRouteTest  {
     new GameService()
   }
 
-  test("should connect to the GameService websocket") {
+  test("should be able to connect to the GameService websocket") {
     assertWebSocket("John") { wsClient =>
       // check response for WS upgrade headers
       isWebSocketUpgrade shouldEqual true
     }
   }
 
-  test("should respond with correct message") {
-    assertWebSocket("John") { wsClient =>
-      wsClient.expectMessage("[{\"name\": \"John\"}]")
-      wsClient.sendMessage("hello")
-      wsClient.expectMessage("hello")
-    }
-  }
-
   test("should register player") {
     assertWebSocket("John") { wsClient =>
-      wsClient.expectMessage("[{\"name\": \"John\"}]")
+      wsClient.expectMessage("[{\"name\": \"John\", \"position\": {\"x\": 0, \"y\": 0}}]")
     }
   }
 
@@ -39,21 +31,37 @@ class ServerTestSpec extends FunSuite with Matchers with ScalatestRouteTest  {
     val wsClient1 = WSProbe()
     val wsClient2 = WSProbe()
 
-    WS(s"/?playerName=john", wsClient1.flow) ~> gameService.webSocketRoute -> check {
-      wsClient1.expectMessage("[{\"name\": \"john\"}]")
+    WS(s"/?playerName=John", wsClient1.flow) ~> gameService.webSocketRoute -> check {
+      wsClient1.expectMessage("[{\"name\": \"John\", \"position\": {\"x\": 0, \"y\": 0}}]")
     }
 
-    WS(s"/?playerName=john", wsClient1.flow) ~> gameService.webSocketRoute -> check {
-      wsClient2.expectMessage("[{\"name\": \"john\"},{\"name\": \"alice\"}]")
+    WS(s"/?playerName=Aohn", wsClient1.flow) ~> gameService.webSocketRoute -> check {
+      wsClient2.expectMessage("[{\"name\": \"John\", \"position\": {\"x\": 0, \"y\": 0}}," +
+        "{\"name\": \"Alice\", \"position\": {\"x\": 0, \"y\": 0}}]")
     }
   }
 
   test("should register player and move it up") {
     assertWebSocket("John") { wsClient =>
-      wsClient.expectMessage("[{\"name\": \"john\", \"position\": {\"x\": 0, \"y\": 0}}]")
+      wsClient.expectMessage("[{\"name\": \"John\", \"position\": {\"x\": 0, \"y\": 0}}]")
+      wsClient.sendMessage("up")
+      wsClient.expectMessage("{\"name\": \"John\", \"position\": {\"x\": 0, \"y\": 1}}")
     }
   }
 
+  test("should register player and move around") {
+    assertWebSocket("John") { wsClient =>
+      wsClient.expectMessage("[{\"name\": \"John\", \"position\": {\"x\": 0, \"y\": 0}}]")
+      wsClient.sendMessage("up")
+      wsClient.expectMessage("{\"name\": \"John\", \"position\": {\"x\": 0, \"y\": 1}}")
+      wsClient.sendMessage("left")
+      wsClient.expectMessage("{\"name\": \"John\", \"position\": {\"x\": -1, \"y\": 1}}")
+      wsClient.sendMessage("down")
+      wsClient.expectMessage("{\"name\": \"John\", \"position\": {\"x\": -1, \"y\": 0}}")
+      wsClient.sendMessage("right")
+      wsClient.expectMessage("{\"name\": \"John\", \"position\": {\"x\": 0, \"y\": 0}}")
+    }
+  }
 
   def assertWebSocket(playerName: String)(assertions: WSProbe => Unit) : Unit = {
     val gameService = new GameService()

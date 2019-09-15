@@ -1,7 +1,18 @@
 [0m[[0m[0minfo[0m] [0m[0m[32mServerTestSpec:[0m[0m
 [0m[[0m[0minfo[0m] [0m[0m[32m- should create empty GameService[0m[0m
-[0m[[0m[0minfo[0m] [0m[0m[32m- should connect to the GameService websocket[0m[0m
-[0m[[0m[0minfo[0m] [0m[0m[32m- should respond with correct message[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should be able to connect to the GameService websocket[0m[0m
 [0m[[0m[0minfo[0m] [0m[0m[32m- should register player[0m[0m
-[0m[[0m[0minfo[0m] [0m[0m[32m- should register multiple players[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m- should register multiple players *** FAILED ***[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  akka.ConfigurationException: Could not start logger due to [akka.ConfigurationException: Logger specified in config can't be loaded [akka.event.Logging$DefaultLogger] due to [akka.event.Logging$LoggerInitializationException: Logger log1-Logging$DefaultLogger did not respond with LoggerInitialized, sent instead [TIMEOUT]]][0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at akka.event.LoggingBus.startDefaultLoggers(Logging.scala:162)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at akka.event.LoggingBus.startDefaultLoggers$(Logging.scala:105)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at akka.event.EventStream.startDefaultLoggers(EventStream.scala:25)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at akka.actor.LocalActorRefProvider.init(ActorRefProvider.scala:678)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at akka.actor.ActorSystemImpl.liftedTree2$1(ActorSystem.scala:912)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at akka.actor.ActorSystemImpl._start$lzycompute(ActorSystem.scala:908)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at akka.actor.ActorSystemImpl._start(ActorSystem.scala:908)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at akka.actor.ActorSystemImpl.start(ActorSystem.scala:930)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at akka.actor.ActorSystem$.apply(ActorSystem.scala:258)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  at akka.actor.ActorSystem$.apply(ActorSystem.scala:302)[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[31m  ...[0m[0m
 [0m[[0m[0minfo[0m] [0m[0m[32m- should register player and move it up[0m[0m
