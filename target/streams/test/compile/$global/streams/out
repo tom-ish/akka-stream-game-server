@@ -1,6 +1,11 @@
 [0m[[0m[0mdebug[0m] [0m[0mAcquiring lock on file /Users/Tomohiro/Documents/ScalaProject/akka-stream-game-server/project/target/.sbt-compilation-infos/root-test/.sbt-idea-lock ...[0m
-[0m[[0m[31merror[0m] [0m[0m/Users/Tomohiro/Documents/ScalaProject/akka-stream-game-server/src/test/scala/tomish/ServerTestSpec.scala:23:39: could not find implicit value for parameter materializer: akka.stream.Materializer[0m
-[0m[[0m[31merror[0m] [0m[0m      binaryMessage.dataStream.runWith(Sink.ignore)[0m
-[0m[[0m[31merror[0m] [0m[0m                                      ^[0m
-[0m[[0m[31merror[0m] [0m[0mone error found[0m
+[0m[[0m[31merror[0m] [0m[0m/Users/Tomohiro/Documents/ScalaProject/akka-stream-game-server/src/test/scala/tomish/ServerTestSpec.scala:90:29: Cannot find JsonWriter or JsonFormat type class for Iterable[tomish.Player][0m
+[0m[[0m[31merror[0m] [0m[0m        TextMessage(players.toJson.toString)[0m
+[0m[[0m[31merror[0m] [0m[0m                            ^[0m
+[0m[[0m[31merror[0m] [0m[0m/Users/Tomohiro/Documents/ScalaProject/akka-stream-game-server/src/test/scala/tomish/ServerTestSpec.scala:102:40: type mismatch;[0m
+[0m[[0m[31merror[0m] [0m[0m found   : Seq[akka.stream.Inlet[_]][0m
+[0m[[0m[31merror[0m] [0m[0m required: akka.stream.Inlet[?][0m
+[0m[[0m[31merror[0m] [0m[0m    FlowShape(messagesToGameEventsFlow.inlets, messagePassingFlow.out)[0m
+[0m[[0m[31merror[0m] [0m[0m                                       ^[0m
+[0m[[0m[31merror[0m] [0m[0mtwo errors found[0m
 [0m[[0m[0mdebug[0m] [0m[0mReleasing lock on file /Users/Tomohiro/Documents/ScalaProject/akka-stream-game-server/project/target/.sbt-compilation-infos/root-test/.sbt-idea-lock.[0m

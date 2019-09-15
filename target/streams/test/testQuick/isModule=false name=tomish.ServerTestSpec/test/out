@@ -1,5 +1,6 @@
 [0m[[0m[0minfo[0m] [0m[0m[32mServerTestSpec:[0m[0m
-[0m[[0m[0minfo[0m] [0m[0m[32mobject[0m[0m
 [0m[[0m[0minfo[0m] [0m[0m[32m- should create empty GameService[0m[0m
-[0m[[0m[0minfo[0m] [0m[0m[32mobject[0m[0m
 [0m[[0m[0minfo[0m] [0m[0m[32m- should connect to the GameService websocket[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should respond with correct message[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should register player[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should register multiple players[0m[0m
