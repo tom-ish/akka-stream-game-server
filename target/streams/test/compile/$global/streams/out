@@ -1,11 +1,7 @@
 [0m[[0m[0mdebug[0m] [0m[0mAcquiring lock on file /Users/Tomohiro/Documents/ScalaProject/akka-stream-game-server/project/target/.sbt-compilation-infos/root-test/.sbt-idea-lock ...[0m
-[0m[[0m[31merror[0m] [0m[0m/Users/Tomohiro/Documents/ScalaProject/akka-stream-game-server/src/test/scala/tomish/ServerTestSpec.scala:90:29: Cannot find JsonWriter or JsonFormat type class for Iterable[tomish.Player][0m
-[0m[[0m[31merror[0m] [0m[0m        TextMessage(players.toJson.toString)[0m
-[0m[[0m[31merror[0m] [0m[0m                            ^[0m
-[0m[[0m[31merror[0m] [0m[0m/Users/Tomohiro/Documents/ScalaProject/akka-stream-game-server/src/test/scala/tomish/ServerTestSpec.scala:102:40: type mismatch;[0m
-[0m[[0m[31merror[0m] [0m[0m found   : Seq[akka.stream.Inlet[_]][0m
-[0m[[0m[31merror[0m] [0m[0m required: akka.stream.Inlet[?][0m
-[0m[[0m[31merror[0m] [0m[0m    FlowShape(messagesToGameEventsFlow.inlets, messagePassingFlow.out)[0m
-[0m[[0m[31merror[0m] [0m[0m                                       ^[0m
-[0m[[0m[31merror[0m] [0m[0mtwo errors found[0m
+[0m[[0m[33mwarn[0m] [0m[0m/Users/Tomohiro/Documents/ScalaProject/akka-stream-game-server/src/test/scala/tomish/ServerTestSpec.scala:79:66: match may not be exhaustive.[0m
+[0m[[0m[33mwarn[0m] [0m[0mIt would fail on the following inputs: Streamed(_), Streamed(_), Strict(_)[0m
+[0m[[0m[33mwarn[0m] [0m[0m    val messagesToGameEventsFlow = builder.add(Flow[Message].map {[0m
+[0m[[0m[33mwarn[0m] [0m[0m                                                                 ^[0m
+[0m[[0m[33mwarn[0m] [0m[0mone warning found[0m
 [0m[[0m[0mdebug[0m] [0m[0mReleasing lock on file /Users/Tomohiro/Documents/ScalaProject/akka-stream-game-server/project/target/.sbt-compilation-infos/root-test/.sbt-idea-lock.[0m

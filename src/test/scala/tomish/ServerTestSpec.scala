@@ -22,7 +22,7 @@ class ServerTestSpec extends FunSuite with Matchers with ScalatestRouteTest  {
 
   test("should respond with correct message") {
     assertWebSocket("John") { wsClient =>
-      wsClient.expectMessage("welcome John")
+      wsClient.expectMessage("[{\"name\": \"John\"}]")
       wsClient.sendMessage("hello")
       wsClient.expectMessage("hello")
     }
@@ -30,7 +30,7 @@ class ServerTestSpec extends FunSuite with Matchers with ScalatestRouteTest  {
 
   test("should register player") {
     assertWebSocket("John") { wsClient =>
-      wsClient.expectMessage("welcome John")
+      wsClient.expectMessage("[{\"name\": \"John\"}]")
     }
   }
 
@@ -74,8 +74,7 @@ class GameService() extends Directives {
     import GraphDSL.Implicits._
 
     val materialization = builder.materializedValue.map(playerActorRef => PlayerJoined(Player(playerName), playerActorRef))
-    val messagePassingFlow = builder.add(Flow[Message].map(m => m))
-    val merge = builder.add(Merge[GameEvent](2))
+     val merge = builder.add(Merge[GameEvent](2))
 
     val messagesToGameEventsFlow = builder.add(Flow[Message].map {
       case TextMessage.Strict(txt) => PlayerMoveRequest(playerName, txt)
@@ -86,16 +85,17 @@ class GameService() extends Directives {
         import spray.json._
         import DefaultJsonProtocol._
 
-        val playerFormat = jsonFormat1(Player)
+        implicit val playerFormat = jsonFormat1(Player)
         TextMessage(players.toJson.toString)
       }
+      case PlayerMoveRequest(playerName, direction) =>  TextMessage(direction)
     })
 
     val gameAreaActorSink = Sink.actorRef[GameEvent](gameAreaActor, PlayerLeft(playerName))
 
-    materialization ~> merge
+    materialization ~> merge ~> gameAreaActorSink
     messagesToGameEventsFlow ~> merge
-    merge ~> gameAreaActorSink
+
 
     playerActor ~> gameEventsToMessagesFlow
 
@@ -107,9 +107,19 @@ class GameAreaActor extends Actor {
   val players = collection.mutable.LinkedHashMap[String, PlayerWithActor]()
 
   override def receive: Receive = {
-    case PlayerJoined(player, actor) => players += (player.name -> PlayerWithActor(player, actor))
-    case PlayerLeft(playerName) => players -= (playerName)
-    case PlayerMoveRequest(playerName, d) => ???
+    case PlayerJoined(player, actor) => {
+      players += (player.name -> PlayerWithActor(player, actor))
+      notifyPlayersChanged()
+    }
+    case PlayerLeft(playerName) => {
+      players -= (playerName)
+      notifyPlayersChanged()
+    }
+    case msg: PlayerMoveRequest => notifyPlayerMoveRequested(msg)
+  }
+
+  def notifyPlayerMoveRequested(playerMoveRequest: PlayerMoveRequest): Unit = {
+    players.values.foreach(_.actor ! playerMoveRequest)
   }
 
   def notifyPlayersChanged(): Unit = {
