@@ -48,6 +48,13 @@ class ServerTestSpec extends FunSuite with Matchers with ScalatestRouteTest  {
     }
   }
 
+  test("should register player and move it up") {
+    assertWebSocket("John") { wsClient =>
+      wsClient.expectMessage("[{\"name\": \"john\", \"position\": {\"x\": 0, \"y\": 0}}]")
+    }
+  }
+
+
   def assertWebSocket(playerName: String)(assertions: WSProbe => Unit) : Unit = {
     val gameService = new GameService()
     val wsClient = WSProbe()
@@ -69,15 +76,16 @@ class GameService() extends Directives {
   val gameAreaActor = actorSystem.actorOf(Props[GameAreaActor], "gameAreaActor")
   val playerActorSource = Source.actorRef[GameEvent](5, OverflowStrategy.fail)
 
-  def flow(playerName: String): Flow[Message, Message, Any] = Flow.fromGraph(GraphDSL.create(playerActorSource) {
-    implicit builder => playerActor =>
+  def flow(playerName: String): Flow[Message, Message, Any] = Flow.fromGraph(GraphDSL.create(playerActorSource) { implicit builder => playerActor =>
     import GraphDSL.Implicits._
 
-    val materialization = builder.materializedValue.map(playerActorRef => PlayerJoined(Player(playerName), playerActorRef))
-     val merge = builder.add(Merge[GameEvent](2))
+    val materialization = builder.materializedValue.map(playerActorRef =>
+        PlayerJoined(Player(playerName, Position(0, 0)), playerActorRef))
+
+    val merge = builder.add(Merge[GameEvent](2))
 
     val messagesToGameEventsFlow = builder.add(Flow[Message].map {
-      case TextMessage.Strict(txt) => PlayerMoveRequest(playerName, txt)
+      case TextMessage.Strict(direction) => PlayerMoveRequest(playerName, direction)
     })
 
     val gameEventsToMessagesFlow = builder.add(Flow[GameEvent].map {
@@ -85,10 +93,10 @@ class GameService() extends Directives {
         import spray.json._
         import DefaultJsonProtocol._
 
-        implicit val playerFormat = jsonFormat1(Player)
+        implicit val positionFormat = jsonFormat2(Position)
+        implicit val playerFormat = jsonFormat2(Player)
         TextMessage(players.toJson.toString)
       }
-      case PlayerMoveRequest(playerName, direction) =>  TextMessage(direction)
     })
 
     val gameAreaActorSink = Sink.actorRef[GameEvent](gameAreaActor, PlayerLeft(playerName))
@@ -115,11 +123,21 @@ class GameAreaActor extends Actor {
       players -= (playerName)
       notifyPlayersChanged()
     }
-    case msg: PlayerMoveRequest => notifyPlayerMoveRequested(msg)
-  }
+    case PlayerMoveRequest(playerName, direction) => {
+      val offset = direction match {
+        case "UP" => Position(0, 1)
+        case "DOWN" => Position(0, -1)
+        case "RIGHT" => Position(1, 0)
+        case "LEFT"=> Position(-1, 0)
+      }
+      val oldPlayerWithActor = players(playerName)
+      val oldPlayer = oldPlayerWithActor.player
+      val actor = oldPlayerWithActor.actor
 
-  def notifyPlayerMoveRequested(playerMoveRequest: PlayerMoveRequest): Unit = {
-    players.values.foreach(_.actor ! playerMoveRequest)
+      players(playerName) = PlayerWithActor(Player(playerName, oldPlayer.position + offset), actor)
+
+      notifyPlayersChanged()
+    }
   }
 
   def notifyPlayersChanged(): Unit = {
@@ -133,6 +151,12 @@ case class PlayerLeft(playerName: String) extends GameEvent
 case class PlayerMoveRequest(playerName: String, direction: String) extends GameEvent
 case class PlayerChanged(players: Iterable[Player]) extends GameEvent
 
-case class Player(name: String)
+case class Player(name: String, position: Position)
 case class PlayerWithActor(player: Player, actor: ActorRef)
+
+case class Position(x: Int, y: Int) {
+  def +(position: Position) = {
+    Position(x + position.x, y + position.y)
+  }
+}
 

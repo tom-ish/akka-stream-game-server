@@ -4,3 +4,4 @@
 [0m[[0m[0minfo[0m] [0m[0m[32m- should respond with correct message[0m[0m
 [0m[[0m[0minfo[0m] [0m[0m[32m- should register player[0m[0m
 [0m[[0m[0minfo[0m] [0m[0m[32m- should register multiple players[0m[0m
+[0m[[0m[0minfo[0m] [0m[0m[32m- should register player and move it up[0m[0m
