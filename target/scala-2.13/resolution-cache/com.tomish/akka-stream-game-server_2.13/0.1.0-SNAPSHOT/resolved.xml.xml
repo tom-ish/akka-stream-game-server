@@ -4,7 +4,7 @@
 		module="akka-stream-game-server_2.13"
 		revision="0.1.0-SNAPSHOT"
 		status="integration"
-		publication="20190915232631"
+		publication="20190916021655"
 	>
 		<description>
 		akka-stream-game-server

@@ -29,8 +29,8 @@ class GameAreaActor extends Actor {
     }
     case PlayerMoveRequest(playerName, direction) => {
       val offset = direction match {
-        case "UP" => Position(0, 1)
-        case "DOWN" => Position(0, -1)
+        case "UP" => Position(0, -1)
+        case "DOWN" => Position(0, 1)
         case "RIGHT" => Position(1, 0)
         case "LEFT"=> Position(-1, 0)
       }

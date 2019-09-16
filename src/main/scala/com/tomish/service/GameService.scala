@@ -13,7 +13,7 @@ class GameService(implicit val actorSystem: ActorSystem, implicit val actorMater
     handleWebSocketMessages(flow(playerName))
   }
 
-  val gameAreaActor = actorSystem.actorOf(Props(new GameAreaActor))
+  val gameAreaActor = actorSystem.actorOf(Props[GameAreaActor])
   val playerActorSource = Source.actorRef[GameEvent](5, OverflowStrategy.fail)
 
   def flow(playerName: String): Flow[Message, Message, Any] = Flow.fromGraph(GraphDSL.create(playerActorSource) { implicit builder => playerActor =>
