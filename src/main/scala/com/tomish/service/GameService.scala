@@ -5,7 +5,7 @@ import akka.http.scaladsl.model.ws.{Message, TextMessage}
 import akka.http.scaladsl.server.Directives
 import akka.stream.scaladsl.{Flow, GraphDSL, Merge, Sink, Source}
 import akka.stream.{ActorMaterializer, FlowShape, OverflowStrategy}
-import com.tomish.actor.{GameAreaActor, GameEvent, Player, PlayerChanged, PlayerJoined, PlayerLeft, PlayerMoveRequest, Position}
+import com.tomish.actor._
 
 class GameService(implicit val actorSystem: ActorSystem, implicit val actorMaterializer: ActorMaterializer) extends Directives {
 
@@ -19,13 +19,13 @@ class GameService(implicit val actorSystem: ActorSystem, implicit val actorMater
   def flow(playerName: String): Flow[Message, Message, Any] = Flow.fromGraph(GraphDSL.create(playerActorSource) { implicit builder => playerActor =>
     import GraphDSL.Implicits._
 
-    val materialization = builder.materializedValue.map(playerActorRef =>
-        PlayerJoined(Player(playerName, Position(0, 0)), playerActorRef))
+    val materialization = builder.materializedValue.map(playerActorRef => PlayerJoined(playerName, playerActorRef))
 
     val merge = builder.add(Merge[GameEvent](2))
 
     val messagesToGameEventsFlow = builder.add(Flow[Message].map {
-      case TextMessage.Strict(direction) => PlayerMoveRequest(playerName, direction)
+      case TextMessage.Strict(direction) =>
+        PlayerMoveRequest(playerName, direction)
     })
 
     val gameEventsToMessagesFlow = builder.add(Flow[GameEvent].map {
@@ -34,14 +34,16 @@ class GameService(implicit val actorSystem: ActorSystem, implicit val actorMater
         import DefaultJsonProtocol._
 
         implicit val positionFormat = jsonFormat2(Position)
-        implicit val playerFormat = jsonFormat2(Player)
-        TextMessage(players.toJson.toString)
+        implicit val playerFormat = jsonFormat4(Player)
+        implicit val msgFormat = jsonFormat2(Msg[String])
+
+        TextMessage(Msg("PlayerChanged", players.toJson.toString).toJson.toString)
       }
     })
 
     val gameAreaActorSink = Sink.actorRef[GameEvent](gameAreaActor, PlayerLeft(playerName))
 
-    materialization ~> merge ~> gameAreaActorSink
+    materialization          ~> merge ~> gameAreaActorSink
     messagesToGameEventsFlow ~> merge
 
 

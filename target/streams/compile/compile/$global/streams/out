@@ -1,2 +1,7 @@
-[0m[[0m[0mdebug[0m] [0m[0mAcquiring lock on file /Users/Tomohiro/Documents/ScalaProject/akka-stream-game-server/project/target/.sbt-compilation-infos/root-compile/.sbt-idea-lock ...[0m
-[0m[[0m[0mdebug[0m] [0m[0mReleasing lock on file /Users/Tomohiro/Documents/ScalaProject/akka-stream-game-server/project/target/.sbt-compilation-infos/root-compile/.sbt-idea-lock.[0m
+[debug] Acquiring lock on file C:\Users\tomoh\Documents\ScalaProject\akka-stream-game-server\project\target\.sbt-compilation-infos\root-compile\.sbt-idea-lock ...
+[warn] C:\Users\tomoh\Documents\ScalaProject\akka-stream-game-server\src\main\scala\com\tomish\service\GameService.scala:26:66: match may not be exhaustive.
+[warn] It would fail on the following inputs: Streamed(_), Streamed(_), Strict(_)
+[warn]     val messagesToGameEventsFlow = builder.add(Flow[Message].map {
+[warn]                                                                  ^
+[warn] one warning found
+[debug] Releasing lock on file C:\Users\tomoh\Documents\ScalaProject\akka-stream-game-server\project\target\.sbt-compilation-infos\root-compile\.sbt-idea-lock.
