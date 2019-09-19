@@ -1,5 +1,5 @@
 [debug] Acquiring lock on file C:\Users\tomoh\Documents\ScalaProject\akka-stream-game-server\project\target\.sbt-compilation-infos\root-compile\.sbt-idea-lock ...
-[warn] C:\Users\tomoh\Documents\ScalaProject\akka-stream-game-server\src\main\scala\com\tomish\service\GameService.scala:26:66: match may not be exhaustive.
+[warn] C:\Users\tomoh\Documents\ScalaProject\akka-stream-game-server\src\main\scala\com\tomish\service\GameService.scala:36:66: match may not be exhaustive.
 [warn] It would fail on the following inputs: Streamed(_), Streamed(_), Strict(_)
 [warn]     val messagesToGameEventsFlow = builder.add(Flow[Message].map {
 [warn]                                                                  ^

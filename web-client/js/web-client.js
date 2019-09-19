@@ -6,6 +6,7 @@ $(document).ready(function() {
     var input = $('#input');
 
 
+
     window.WebSocket = window.WebSocket || window.MozWebSocket;
     if(!window.WebSocket) {
         content.html($('<p>', {
@@ -39,16 +40,8 @@ var lastDir = "";
 function draw(name, color, position) {
     var canvas = document.getElementById("gameArea");
     var ctx = canvas.getContext("2d");
-
-//    ctx.beginPath();
-//    ctx.moveTo(20, 20);
-//    ctx.lineTo(20, 100);
-//    ctx.lineTo(70, 100);
-//    ctx.stroke();
-
     var x = (position.x * tile + width) % width;
     var y = (position.y * tile + height) % height;
-
     ctx.fillStyle = color;
     ctx.fillRect(x, y, tile, tile);
 
@@ -67,13 +60,14 @@ function startWebSocket(name) {
     var modalStart = document.getElementById("modal-start");
     var status = $('#status');
 
+    var players = [];
+
     // open connection
     var connection = new WebSocket('ws://127.0.0.1:8080/?playerName=' + name);
 
     connection.onopen = function() {
         console.log("web socket connected with server");
         status.html("Connected");
-        addUser(name);
     };
     connection.onerror = function(error) {
         content.html($('<p>', {
@@ -87,9 +81,10 @@ function startWebSocket(name) {
         var msgJson = JSON.parse(message.data);
 
         switch(msgJson.msgType) {
-            case "PlayerJoined":
-                break;
-            case "StartGame":
+            case "GameStart":
+                var count = 3;
+                setInterval(setStart(count), 1000)
+                console.log(msgJson.obj);
                 break;
             case "PlayerChanged":
                 var playersArray = JSON.parse(msgJson.obj);
@@ -97,9 +92,19 @@ function startWebSocket(name) {
                     var name = player.name;
                     var color = player.color;
                     var position = player.position;
+                    var isReady = player.isReady;
+                    var canStart = player.canStart;
 
                     console.log("[" + position.x + ";" + position.y + "]");
-                    console.log(color);
+                    console.log(player);
+
+                    if(!gameRunning && !players.includes(name)) {
+                        addUser(name);
+                        players.push(name);
+                    }
+                    if(canStart) {
+                        gameRunning = true;
+                    }
                     draw(name, color, position);
                 });
                 break;
@@ -109,7 +114,7 @@ function startWebSocket(name) {
     $("#gameStart").click(function() {
         if(!gameRunning) {
             console.log("Starting game...");
-            connection.send()
+            connection.send(JSON.stringify({ msgType: "PlayerReady", obj: { player: name}}));
         }
     });
 
@@ -117,8 +122,19 @@ function startWebSocket(name) {
     $(document).keydown(function(e) {
         if(gameRunning && [e.keyCode] !== undefined) {
             console.log("keyPressed : " + arrowKeyCode[e.keyCode]);
-            connection.send(arrowKeyCode[e.keyCode]);
+            connection.send(JSON.stringify({ msgType: "PlayerMoveRequest", obj: {direction: arrowKeyCode[e.keyCode]}}));
             lastDir = arrowKeyCode[e.keyCode];
         }
     });
+}
+
+var count = 3;
+function setStart() {
+    console.log("starting in " + count + " second");
+    if(count == 0) {
+        console.log("START");
+        gameRunning = true;
+    }
+    else
+        count--;
 }

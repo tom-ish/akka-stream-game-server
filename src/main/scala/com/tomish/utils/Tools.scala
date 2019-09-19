@@ -11,7 +11,16 @@ object Tools {
 
   def getRandomColor = {
     val r = new Random()
-    "#"+ r.nextInt(256).toHexString + r.nextInt(256).toHexString + r.nextInt(256).toHexString
+    val red = r.nextInt(256).toHexString
+    val green = r.nextInt(256).toHexString
+    val blue = r.nextInt(256).toHexString
+    var redStr = "" + red
+    var greenStr = "" + green
+    var blueStr = "" + blue
+    if(redStr.length == 1) redStr = "0" + redStr
+    if(greenStr.length == 1) greenStr = "0" + greenStr
+    if(blueStr.length == 1) blueStr = "0" + blueStr
+    "#"+ redStr + greenStr + blueStr
   }
 
   def getColor(color: Color) = {
